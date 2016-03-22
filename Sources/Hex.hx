@@ -6,26 +6,30 @@ import kha.Image;
 import kha.Key;
 import kha.Scheduler;
 import kha.input.Keyboard;
+import BitmapText.Letter;
 
 using kha.graphics2.GraphicsExtension;
+
+typedef Graphics1 = kha.graphics1.Graphics;
+typedef Graphics2 = kha.graphics2.Graphics;
 
 class Hex
 {	
 	/** Kha's pixel context */
-	public var g1:kha.graphics1.Graphics;
+	public var g1:Graphics1;
 	
 	/** Kha's 2d context */
-	public var g2:kha.graphics2.Graphics;
+	public var g2:Graphics2;
+	
+	var g2Editor:Graphics2;
 	
 	/** If should use bilinear filter on render */
 	public var bFilter:Bool = false;
-	
-	public var backbuffer:Image;
+		
 	var sprites:Image;
+	public var backbuffer:Image;
 	
-	var bmFont:Image;
-	var bmFontWidth:Int;
-	var bmFontHeight:Int;
+	public var bmText:BitmapText;
 	
 	var totalSpritesCol:Int;
 	var tileWidth:Int;
@@ -51,12 +55,18 @@ class Hex
 	
 	public var updateTaskId:Int;
 	
+	public var inEditor:Bool;
+	
+	public var lineHeight:Int;
+	
+	public var print:String->Float->Float->?Color->Void;
+	public var getTextWidth:String->Int;
+	
 	public function new(backbuffer:Image, tileWidth:Int, tileHeight:Int)
 	{
 		this.backbuffer = backbuffer;
-		
 		g1 = backbuffer.g1;
-		g2 = backbuffer.g2;
+		g2 = backbuffer.g2;		
 		
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
@@ -71,11 +81,11 @@ class Hex
 		sy = 16;
 		
 		keysHeld = new Map<Int, Bool>();
-		keysPressed = new Map<Int, Bool>();
+		keysPressed = new Map<Int, Bool>();		
 		
 		var k = Keyboard.get();
 		k.notify(keyDown, keyUp);
-	}
+	}	
 	
 	public function setTileSize(width:Int, height:Int):Void
 	{
@@ -97,12 +107,22 @@ class Hex
 			keysPressed.remove(key);		
 	}
 	
-	public function loadBmFont(name:String, width:Int, height:Int):Void
+	public function loadBmFont(fontName:String):Void
 	{
-		bmFont = Reflect.field(Assets.images, name);
-		bmFontWidth = width;
-		bmFontHeight = height;
+		if (bmText == null)
+			bmText = new BitmapText(g2, fontName);
+		else
+			bmText.font = BitmapText.getFont(fontName);
+			
+		lineHeight = bmText.font.lineHeight;
+		print = bmText.print;
+		getTextWidth = bmText.getTextWidth;
 	}
+	
+	inline public function getLetter(char:String):Letter
+	{
+		return bmText.font.letters.get(char);
+	}	
 	
 	function keyDown(key:Key, char:String)
 	{
@@ -197,35 +217,6 @@ class Hex
 	{
 		g1.setPixel(Std.int(x - camX), Std.int(y - camY), color);
 	}	
-	
-	public function print(str:String, x:Float, y:Float, ?color:Color = 0xffffffff):Void
-	{
-		if (bmFont != null)
-		{
-			var code:Int;
-			var cursor = x;
-			
-			g2.color = color;
-				
-			str = str.toUpperCase();
-			
-			for (i in 0...str.length)
-			{
-				if (str.charAt(i) != ' ')
-				{
-					code = str.charCodeAt(i);
-					if (code < 96)
-						code -= 33;
-					else if (code > 122)
-						code -= 60;				
-					
-					g2.drawScaledSubImage(bmFont, code * bmFontWidth, 0, bmFontWidth, bmFontHeight, cursor - camX, y - camY, bmFontWidth, bmFontHeight);
-				}
-				
-				cursor += bmFontWidth;
-			}
-		}
-	}
 	
 	/** Clear the screen */
 	inline public function cls(color:Color = 0xff000000):Void

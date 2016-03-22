@@ -8,7 +8,7 @@ class Main
 	
 	public static function main()
 	{
-		kha.System.init({ title : 'Hex', width : 540, height : 540 }, function() {
+		kha.System.init({ title : 'Hex', width : 640, height : 480 }, function() {
 			kha.Assets.loadEverything(function() {
 				new Project();
 			});

@@ -4,7 +4,7 @@ project.addAssets('Assets/**');
 project.addSources('Sources');
 project.addSources('C:\\HaxeToolkit\\haxe\\lib\\hscript\\git');
 
-project.windowOptions.width = 540;
-project.windowOptions.height = 540;
+project.windowOptions.width = 640;
+project.windowOptions.height = 480;
 
 return project;
