@@ -84,14 +84,8 @@ class Editor
 	
 	function addNewLine():Void
 	{
-		if (cursor.y == (buffer.length - 1))
-		{
-			buffer.push('');
-			cursor.y++;
-			cursor.x = 0;
-			realCursorPos.x = LEFT_MARGIN;
-			calcRealCursorY();
-		}
+		if (cursor.y == (buffer.length - 1))		
+			buffer.push('');		
 		else
 		{
 			buffer.insert(cursor.y + 1, '');
@@ -100,17 +94,13 @@ class Editor
 			{
 				buffer[cursor.y + 1] = buffer[cursor.y].substr(cursor.x);
 				buffer[cursor.y] = buffer[cursor.y].substr(0, cursor.x);
-				cursor.y++;
-				
-				if (cursor.x > buffer[cursor.y].length)
-				{
-					cursor.x = buffer[cursor.y].length;
-					calcRealCursorX();
-				}
-			}
-			
-			calcRealCursorY();
+			}						
 		}
+		
+		cursor.y++;	
+		cursor.x = 0;
+		realCursorPos.x = LEFT_MARGIN;		
+		calcRealCursorY();
 		
 		if (showError)
 			showError = false;
@@ -158,7 +148,7 @@ class Editor
 			buffer[cursor.y] += char;
 		else
 			buffer[cursor.y] = buffer[cursor.y].substr(0, cursor.x) + char
-			+ buffer[cursor.y].substr(cursor.x + 1);
+			+ buffer[cursor.y].substr(cursor.x);
 			
 		cursor.x++;
 		calcRealCursorX();
