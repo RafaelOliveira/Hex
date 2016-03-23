@@ -225,17 +225,7 @@ class Editor
 	}
 	
 	public function render(g2:Graphics)
-	{
-		// panel
-		g2.color = 0xff8a8a8a;
-		g2.fillRect(0, 0, windowWidth, panelHeight);
-		
-		// panel shadown
-		g2.color = Color.Black;
-		g2.pushOpacity(0.2);
-		g2.fillRect(0, panelHeight, windowWidth, 3);
-		g2.popOpacity();
-		
+	{		
 		// cursor
 		if (renderCursor)
 			hex.rectfill(realCursorPos.x - 1, realCursorPos.y + 2, realCursorPos.x + 2, realCursorPos.y + hex.lineHeight + 6, Color.Red); 
@@ -251,6 +241,16 @@ class Editor
 				hex.print(buffer[y], LEFT_MARGIN, rcy);			
 			rcy += hex.lineHeight + 2;
 		}
+		
+		// panel
+		g2.color = 0xff8a8a8a;
+		g2.fillRect(0, 0, windowWidth, panelHeight);
+		
+		// panel shadown
+		g2.color = Color.Black;
+		g2.pushOpacity(0.2);
+		g2.fillRect(0, panelHeight, windowWidth, 3);
+		g2.popOpacity();
 		
 		if (showError)
 		{
