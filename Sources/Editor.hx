@@ -34,7 +34,11 @@ class Editor
 	var sprites:Image;
 	
 	var windowWidth:Int;
-	var windowHeight:Int;	
+	var windowHeight:Int;
+	
+	var showError:Bool;
+	var errorMessage:String;
+	var errorPanel:Rect;
 	
 	public function new(hex:Hex) 
 	{
@@ -54,6 +58,8 @@ class Editor
 		
 		windowWidth = System.windowWidth();
 		windowHeight = System.windowHeight();
+		
+		errorPanel = new Rect(5, windowHeight - 5 - 5 - hex.lineHeight - 5 , windowWidth - 5 - 5, 5 + hex.lineHeight + 5);
 		
 		Input.addNewLine = addNewLine;
 		Input.addChar = addChar;
@@ -100,7 +106,10 @@ class Editor
 			}
 			
 			calcRealCursorY();
-		}		
+		}
+		
+		if (showError)
+			showError = false;
 	}
 	
 	function removeChar(direction:Int):Void
@@ -133,6 +142,9 @@ class Editor
 		{
 			
 		}
+		
+		if (showError)
+			showError = false;
 	}
 	
 	function addChar(char:String):Void
@@ -146,6 +158,9 @@ class Editor
 			
 		cursor.x++;
 		calcRealCursorX();
+		
+		if (showError)
+			showError = false;
 	}
 	
 	function checkArrowKeys():Void
@@ -199,6 +214,12 @@ class Editor
 		return buffer.join(' ');
 	}
 	
+	public function showErrorMsg(message:String):Void
+	{
+		showError = true;
+		errorMessage = message;
+	}
+	
 	public function render(g2:Graphics)
 	{
 		// panel
@@ -225,7 +246,15 @@ class Editor
 			if (buffer[y].length > 0)			
 				hex.print(buffer[y], LEFT_MARGIN, rcy);			
 			rcy += hex.lineHeight + 2;
-		}		
+		}
+		
+		if (showError)
+		{
+			g2.color = Color.Red;
+			g2.fillRect(errorPanel.x, errorPanel.y, errorPanel.w, errorPanel.h);
+			g2.color = Color.White;
+			hex.print(errorMessage, errorPanel.x + 5, errorPanel.y + 2);
+		}
 	}	
 	
 	function calcRealCursorX():Void

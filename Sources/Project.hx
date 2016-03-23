@@ -1,5 +1,6 @@
 package;
 
+import hscript.Expr.Error;
 import kha.Assets;
 import kha.Color;
 import kha.Framebuffer;
@@ -80,7 +81,14 @@ class Project
 			game.setupMode(MODE_GAME);
 				
 			Input.activate(false);			
-			game.run(editor.getBuffer());
+			var error = game.run(editor.getBuffer());
+			
+			if (error != null)
+			{
+				editor.showErrorMsg(getErrorMessage(error));
+				mode = MODE_EDITOR;
+				switchMode();
+			}
 		}
 	}
 	
@@ -114,6 +122,29 @@ class Project
 		{
 			mode *= -1;
 			switchMode();
+		}
+	}
+	
+	function getErrorMessage(e:Error):String
+	{
+		switch(e)
+		{
+			case Error.EInvalidChar(c):
+				return 'invalid char: $c';
+			case Error.EUnexpected(s):
+				return 'Unexpected: $s';
+			case Error.EUnterminatedString:
+				return 'Unterminated String';
+			case Error.EUnterminatedComment:
+				return 'Unterminated Comment';
+			case Error.EUnknownVariable(v):
+				return 'Unknown Variable: $v';
+			case Error.EInvalidIterator(v):
+				return 'Invalid Iterator: $v';
+			case Error.EInvalidOp(op):
+				return 'Invalid Op: $op';
+			case Error.EInvalidAccess(f):
+				return 'Invalid Access: $f';
 		}
 	}
 }

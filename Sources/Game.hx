@@ -14,8 +14,7 @@ class Game
 	var hex:Hex;
 	var parser:Parser;
 	var interp:Interp;
-	var program:Expr;
-	var errorCatched:Bool;
+	var program:Expr;	
 	
 	var start:Bool;
 	
@@ -30,9 +29,9 @@ class Game
 		setupInterp();
 	}
 	
-	public function run(script:String)
+	public function run(script:String):Error
 	{
-		errorCatched = false;
+		var error:Error = null;
 		
 		try
 		{
@@ -46,15 +45,20 @@ class Game
 		}
 		catch (e:Error)
 		{
-			errorCatched = true;
+			error = e;
+			
+			#if debug
 			trace('Error in line: ${parser.line}');
+			#end
 		}
 		
-		if (!errorCatched)
+		if (error == null)
 		{
-			//interp.variables.set('backbuffer', hex.backbuffer);
 			interp.execute(program);
+			return null;
 		}
+		else
+			return error;
 	}
 	
 	/**
