@@ -40,6 +40,8 @@ class Editor
 	var errorMessage:String;
 	var errorPanel:Rect;
 	
+	var window:Rect;
+	
 	public function new(hex:Hex) 
 	{
 		this.hex = hex;
@@ -60,6 +62,8 @@ class Editor
 		windowHeight = System.windowHeight();
 		
 		errorPanel = new Rect(5, windowHeight - 5 - 5 - hex.lineHeight - 5 , windowWidth - 5 - 5, 5 + hex.lineHeight + 5);
+		
+		window = new Rect(0, 0, windowWidth, windowHeight);
 		
 		Input.addNewLine = addNewLine;
 		Input.addChar = addChar;
@@ -263,6 +267,12 @@ class Editor
 		
 		if (cursor.x > 0)
 			realCursorPos.x += hex.getTextWidth(buffer[cursor.y].substr(0, cursor.x));
+			
+		if (realCursorPos.x > window.w)
+			hex.camera(realCursorPos.x - window.w);
+		else
+			hex.camera(0, null);
+		
 	}
 	
 	function calcRealCursorY():Void
@@ -271,5 +281,10 @@ class Editor
 			
 		if (cursor.y > 0)	
 			realCursorPos.y += (cursor.y * (hex.lineHeight + 2));
+			
+		if ((realCursorPos.y + hex.lineHeight + 6) > window.h)
+			hex.camera(null, (realCursorPos.y + hex.lineHeight + 6) - window.h);
+		else
+			hex.camera(null, 0);
 	}
 }

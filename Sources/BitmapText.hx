@@ -49,13 +49,16 @@ class BitmapText
 	
 	var cursorX:Float;
 	
+	var hex:Hex;
+	
 	/**
 	 * Loads the bitmap font from cache. Remember to call loadFont first before
 	 * creating new a BitmapText.
 	 */
-	public function new(g2:Graphics, fontName:String):Void
+	public function new(g2:Graphics, hex:Hex, fontName:String):Void
 	{
 		this.g2 = g2;
+		this.hex = hex;
 		cursorX = 0;
 		
 		if (fontCache != null && fontCache.exists(fontName))
@@ -87,8 +90,8 @@ class BitmapText
 						letter.y,
 						letter.width,
 						letter.height,
-						x + cursorX + letter.xoffset,
-						y + letter.yoffset,
+						x + cursorX + letter.xoffset - hex.camX,
+						y + letter.yoffset - hex.camY,
 						letter.width,
 						letter.height);
 

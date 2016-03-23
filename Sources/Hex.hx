@@ -13,6 +13,7 @@ using kha.graphics2.GraphicsExtension;
 typedef Graphics1 = kha.graphics1.Graphics;
 typedef Graphics2 = kha.graphics2.Graphics;
 
+@:allow(BitmapText)
 class Hex
 {	
 	/** Kha's pixel context */
@@ -110,7 +111,7 @@ class Hex
 	public function loadBmFont(fontName:String):Void
 	{
 		if (bmText == null)
-			bmText = new BitmapText(g2, fontName);
+			bmText = new BitmapText(g2, this, fontName);
 		else
 			bmText.font = BitmapText.getFont(fontName);
 			
@@ -226,12 +227,13 @@ class Hex
 	
 	public function camera(?x:Float, ?y:Float):Void
 	{
-		if (x != null && y != null)
-		{
+		if (x != null)
 			camX = x;
+		
+		if (y != null)
 			camY = y;
-		}
-		else
+		
+		if (x == null && y == null)
 		{
 			camX = 0;
 			camY = 0;
